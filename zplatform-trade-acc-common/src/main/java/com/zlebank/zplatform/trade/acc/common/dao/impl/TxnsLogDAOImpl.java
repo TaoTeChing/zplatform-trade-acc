@@ -1,13 +1,19 @@
 package com.zlebank.zplatform.trade.acc.common.dao.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.zlebank.zplatform.trade.acc.common.dao.TxnsLogDAO;
 import com.zlebank.zplatform.trade.acc.common.dao.pojo.PojoTxnsLog;
@@ -24,7 +30,7 @@ import com.zlebank.zplatform.trade.acc.common.utils.DateUtil;
  * @param T
  * @since
  */
-@Repository("TxnsLogDAO")
+@Repository("txnsLogDAO")
 public class TxnsLogDAOImpl extends HibernateBaseDAOImpl<PojoTxnsLog> implements
 		TxnsLogDAO {
 
@@ -41,12 +47,13 @@ public class TxnsLogDAOImpl extends HibernateBaseDAOImpl<PojoTxnsLog> implements
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-	public void updateAccBusiCode(String txnseqno, String busicode) {
+	public void updateAccBusiCodeAndFee(String txnseqno, String busicode,String txnFee){
 		// TODO Auto-generated method stub
-		String hql = "update TxnsLogModel set accbusicode = ? where txnseqno = ? ";
+		String hql = "update PojoTxnsLog set accbusicode = ?,txnfee = ? where txnseqno = ? ";
 		Query query = getSession().createQuery(hql);
 		query.setParameter(0, busicode);
-		query.setParameter(1, busicode);
+		query.setParameter(1, Long.valueOf(txnFee));
+		query.setParameter(2, txnseqno);
 		int rows = query.executeUpdate();
 		log.info("updateAccBusiCode() effect rows:" + rows);
 	}
@@ -55,7 +62,7 @@ public class TxnsLogDAOImpl extends HibernateBaseDAOImpl<PojoTxnsLog> implements
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
 	public void updateAppStatus(String txnseqno, String appOrderStatus,
 			String appOrderinfo) {
-		String hql = "update TxnsLogModel set appordfintime = ?,apporderstatus = ?,apporderinfo = ? where txnseqno = ?";
+		String hql = "update PojoTxnsLog set appordfintime = ?,apporderstatus = ?,apporderinfo = ? where txnseqno = ?";
 		Query query = getSession().createQuery(hql);
 		query.setParameter(0, DateUtil.getCurrentDateTime());
 		query.setParameter(1, appOrderStatus);
@@ -70,7 +77,7 @@ public class TxnsLogDAOImpl extends HibernateBaseDAOImpl<PojoTxnsLog> implements
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
 	public void updateTradeStatFlag(String txnseqno,
 			TradeStatFlagEnum tradeStatFlagEnum) {
-		String hql = "update TxnsLogModel set tradestatflag = ? where txnseqno = ?";
+		String hql = "update PojoTxnsLog set tradestatflag = ? where txnseqno = ?";
 		Query query = getSession().createQuery(hql);
 		query.setParameter(0, tradeStatFlagEnum.getStatus());
 		query.setParameter(1, txnseqno);
@@ -78,5 +85,34 @@ public class TxnsLogDAOImpl extends HibernateBaseDAOImpl<PojoTxnsLog> implements
 		log.info("updateTradeStatFlag() effect rows:" + rows);
 
 	}
-
+	/**
+	 * 
+	 * @param txnsLog
+	 * @return
+	 */
+	@Transactional(readOnly = true)
+	public Long getTxnFee(PojoTxnsLog txnsLog){
+        //交易序列号，扣率版本，业务类型，交易金额，会员号，原交易序列号，卡类型 
+		SQLQuery sqlQuery = (SQLQuery) getSession().createSQLQuery("select FNC_GETFEES(?,?,?,?,?,?,?) as fee from dual").setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+		Object[] paramates = new Object[]{txnsLog.getTxnseqno(),txnsLog.getFeever(),txnsLog.getBusicode(),txnsLog.getAmount(),txnsLog.getAccsecmerno(),txnsLog.getTxnseqnoOg(),txnsLog.getCardtype()};
+		for(int i=0;i<paramates.length;i++){
+			sqlQuery.setParameter(i, paramates[i]);
+		}
+		List<Map<String, Object>> feeList = sqlQuery.list();
+        
+        if(feeList.size()>0){
+            if(StringUtils.isEmpty(feeList.get(0).get("FEE"))){
+                return 0L;
+            }else{
+                return Long.valueOf(feeList.get(0).get("FEE")+"");
+            }
+            
+        }
+        return 0L;
+       
+    }
+	
+	public static void main(String[] args) {
+		System.out.println(StringUtils.isEmpty(null));
+	}
 }

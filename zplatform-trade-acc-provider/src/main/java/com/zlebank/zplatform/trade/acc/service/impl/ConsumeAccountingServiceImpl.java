@@ -16,10 +16,12 @@ import com.zlebank.zplatform.acc.exception.IllegalEntryRequestException;
 import com.zlebank.zplatform.acc.service.AccEntryService;
 import com.zlebank.zplatform.acc.service.entry.EntryEvent;
 import com.zlebank.zplatform.commons.dao.pojo.AccStatusEnum;
+import com.zlebank.zplatform.commons.utils.BeanCopyUtil;
 import com.zlebank.zplatform.commons.utils.StringUtil;
 import com.zlebank.zplatform.trade.acc.bean.ResultBean;
 import com.zlebank.zplatform.trade.acc.bean.TxnsLogBean;
 import com.zlebank.zplatform.trade.acc.common.dao.TxnsLogDAO;
+import com.zlebank.zplatform.trade.acc.common.dao.pojo.PojoTxnsLog;
 import com.zlebank.zplatform.trade.acc.common.enums.TradeStatFlagEnum;
 import com.zlebank.zplatform.trade.acc.enums.BusinessEnum;
 import com.zlebank.zplatform.trade.acc.service.ConsumeAccountingService;
@@ -82,10 +84,13 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
             if("99999999".equals(channelId)){
                 busiCode = "10000002";
                 payMemberId = txnsLog.getPayfirmerno();
+                if (txnsLog.getTxnfee() != null) {
+                    txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
+                }
             }else {
                 busiCode = "10000001";
                 if (txnsLog.getTxnfee() != null) {
-                    txnfee = txnsLog.getTxnfee();
+                	txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
                 }
             }
             /**产品id**/
@@ -93,7 +98,7 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
             /**交易金额**/
             BigDecimal amount = new BigDecimal(txnsLog.getAmount());
             /**佣金**/
-            BigDecimal commission = new BigDecimal(txnsLog.getTradcomm());
+            BigDecimal commission = new BigDecimal(txnsLog.getTradcomm()==null?0:txnsLog.getTradcomm());
 
             BigDecimal charge = new BigDecimal(txnfee);
             /**金额D**/
@@ -105,7 +110,7 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
             if("10000004".equals(txnsLog.getBusicode())){
                 isSplit = true;
             }
-            txnsLogDAO.updateAccBusiCode(txnseqno, busiCode);
+            txnsLogDAO.updateAccBusiCodeAndFee(txnseqno, busiCode,txnfee+"");
             TradeInfo tradeInfo = new TradeInfo(txnseqno, payordno, busiCode, payMemberId, payToMemberId, payToParentMemberId, channelId, productId, amount, commission, charge, amountD, amountE, isSplit);
             tradeInfo.setCoopInstCode(txnsLog.getAccfirmerno());
             log.info(JSON.toJSONString(tradeInfo));

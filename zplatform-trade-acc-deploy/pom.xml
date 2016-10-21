@@ -16,7 +16,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<project.nexus>http://localhost:8081</project.nexus>
+		<project.nexus>http://192.168.101.238:8081</project.nexus>
 		<project.gitserver>192.168.101.11</project.gitserver>
 		<project.remoteArtifactRepositories>${project.nexus}/nexus/content/groups/public</project.remoteArtifactRepositories>
 		<sonar.language>java</sonar.language>
@@ -98,10 +98,10 @@
 			<version>4.2.0.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc14</artifactId>
-			<version>10.2</version>
-		</dependency>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc6</artifactId>
+				<version>11</version>
+			</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -167,14 +167,8 @@
 			<version>1.7.21</version>
 		</dependency>
 		<!-- 强制排除 log4j 的依赖,全部 delegate 到 log4j-over-slf4j 上 -->
-
-
 		<!-- slf logback 配置结束 -->
-		<dependency>
-			<groupId>com.zlebank.zplatform</groupId>
-			<artifactId>zplatform-member-commons-api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
+		
 	</dependencies>
 	<repositories>
 		<repository>

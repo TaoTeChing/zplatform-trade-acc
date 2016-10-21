@@ -35,6 +35,8 @@ public enum BusinessEnum {
     INSTEADPAY("70000001"),//代付
     INSTEADPAY_REFUND("70000001"),//代付退汇
     WITHDRAWALS_REFUND("30000003"),//提现退汇
+    
+    INSTEADPAY_REALTIME("70000002"),//实时代付
     REFUND_REFUND("40000003"),//退款退汇
     CREDIT_REFUND("40000004"),//授信账户退款
     

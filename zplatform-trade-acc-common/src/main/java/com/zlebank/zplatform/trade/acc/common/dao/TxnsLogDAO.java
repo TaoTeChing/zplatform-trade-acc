@@ -22,11 +22,11 @@ public interface TxnsLogDAO extends BaseDAO<PojoTxnsLog>{
 	public PojoTxnsLog getTxnsLogByTxnseqno(String txnseqno);
 	
 	/**
-	 * 更新交易受理业务代码
+	 * 更新交易受理业务代码和手续费
 	 * @param txnseqno
 	 * @param busicode
 	 */
-	public void updateAccBusiCode(String txnseqno, String busicode) ;
+	public void updateAccBusiCodeAndFee(String txnseqno, String busicode,String txnFee) ;
 	/**
      * 更新应用方（账务）处理结果信息
      * @param txnseqno
@@ -41,4 +41,11 @@ public interface TxnsLogDAO extends BaseDAO<PojoTxnsLog>{
 	 * @param tradeStatFlagEnum
 	 */
 	public void updateTradeStatFlag(String txnseqno,TradeStatFlagEnum tradeStatFlagEnum);
+	
+	/**
+	 * 获取交易手续费
+	 * @param txnsLog
+	 * @return
+	 */
+	public Long getTxnFee(PojoTxnsLog txnsLog);
 }
