@@ -115,6 +115,7 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 
 	public ResultBean realTimeInsteadPayAccounting(TxnsLogBean txnsLogBean){
 		ResultBean resultBean = null; 
+		EntryEvent entryEvent = null;
 		try {
 			TradeInfo tradeInfo = new TradeInfo();
 			tradeInfo.setTxnseqno(txnsLogBean.getTxnseqno());
@@ -129,10 +130,11 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 			tradeInfo.setCoopInstCode(txnsLogBean.getAcccoopinstino());
 			tradeInfo.setAccess_coopInstCode(txnsLogBean.getAccfirmerno());
 			if(TradeStatFlagEnum.FINISH_SUCCESS==TradeStatFlagEnum.fromValue(txnsLogBean.getTradestatflag())){
-				accEntryService.accEntryProcess(tradeInfo, EntryEvent.TRADE_SUCCESS);
+				entryEvent = EntryEvent.TRADE_SUCCESS;
 			}else{
-				accEntryService.accEntryProcess(tradeInfo, EntryEvent.TRADE_FAIL);
+				entryEvent = EntryEvent.TRADE_FAIL;
 			}
+			accEntryService.accEntryProcess(tradeInfo, entryEvent);
 			resultBean = new ResultBean("00","交易成功");
 			resultBean.setResultBool(true);
 			log.info("交易:"+txnsLogBean.getTxnseqno()+"实时代付入账成功");
@@ -158,7 +160,12 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 		}
 		if(resultBean.isResultBool()){
 			txnsLogBean.setApporderstatus(AccStatusEnum.Finish.getCode());
-			txnsLogBean.setApporderinfo("消费入账成功");
+			if(entryEvent == EntryEvent.TRADE_SUCCESS){
+				txnsLogBean.setApporderinfo("代付交易成功入账成功");
+			}else if(entryEvent == EntryEvent.TRADE_FAIL){
+				txnsLogBean.setApporderinfo("代付交易失败入账成功");
+			}
+			
         }else{
         	txnsLogBean.setApporderstatus(AccStatusEnum.AccountingFail.getCode());
         	txnsLogBean.setApporderinfo(resultBean.getErrMsg());
@@ -166,5 +173,42 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
         txnsLogDAO.updateAppStatus(txnsLogBean.getTxnseqno(), txnsLogBean.getApporderstatus(), txnsLogBean.getApporderinfo());
         txnsLogDAO.updateTradeStatFlag(txnsLogBean.getTxnseqno(), TradeStatFlagEnum.FINISH_ACCOUNTING);
 		return resultBean;
+	}
+	/**
+	 *
+	 * @param txnseqno
+	 * @return
+	 */
+	@Override
+	public ResultBean reexchangeAccounting(String txnseqno) {
+		try {
+			PojoTxnsLog txnsLog = txnsLogDAO.getTxnsLogByTxnseqno(txnseqno);
+			TradeInfo tradeInfo = new TradeInfo();
+			tradeInfo.setTxnseqno(txnsLog.getTxnseqno());
+			tradeInfo.setAmount(new BigDecimal(txnsLog.getAmount()));
+			tradeInfo.setBusiCode(BusinessEnum.INSTEADPAY_REALTIME.getBusiCode());
+			tradeInfo.setCharge(new BigDecimal(txnsLog.getTxnfee()));
+			tradeInfo.setCommission(BigDecimal.ZERO);
+			tradeInfo.setPayMemberId(txnsLog.getAccsecmerno());
+			tradeInfo.setPayToMemberId(txnsLog.getAccmemberid());
+			tradeInfo.setChannelId(ChannelEnmu.CMBCINSTEADPAY_REALTIME.getChnlcode());
+			// 取合作机构号
+			tradeInfo.setCoopInstCode(txnsLog.getAcccoopinstino());
+			tradeInfo.setAccess_coopInstCode(txnsLog.getAccfirmerno());
+			accEntryService.accEntryProcess(tradeInfo, EntryEvent.REFUND_EXCHANGE);
+		} catch (AccBussinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalEntryRequestException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AbstractBusiAcctException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

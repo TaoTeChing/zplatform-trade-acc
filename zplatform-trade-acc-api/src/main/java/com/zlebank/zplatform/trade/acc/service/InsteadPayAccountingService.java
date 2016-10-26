@@ -37,4 +37,11 @@ public interface InsteadPayAccountingService {
 	 * @return 结果bean
 	 */
 	public ResultBean insteadPayAccounting(TxnsLogBean txnsLogBean);
+	
+	/**
+	 * 退汇账务处理
+	 * @param txnseqno 交易序列号
+	 * @return
+	 */
+	public ResultBean reexchangeAccounting(String txnseqno);
 }

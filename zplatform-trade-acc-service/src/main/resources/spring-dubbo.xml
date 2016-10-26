@@ -7,5 +7,8 @@
 	<dubbo:service interface="com.zlebank.zplatform.trade.acc.service.TradeAccountingService" ref="tradeAccountingService" retries="0" version="1.0" async="true" timeout="30000">
 		<dubbo:method name="accountingFor" async="true" return="false" retries="0" retry="0" timeout="30000"></dubbo:method>
 	</dubbo:service>
-	<dubbo:service interface="com.zlebank.zplatform.trade.acc.service.InsteadPayAccountingService" ref="insteadPayAccountingService" retries="0" version="1.0"  timeout="30000"/>
+	<dubbo:service interface="com.zlebank.zplatform.trade.acc.service.InsteadPayAccountingService" ref="insteadPayAccountingService" retries="0" version="1.0"  timeout="30000">
+		<dubbo:method name="advancePaymentAccounting" retries="0" retry="0" timeout="30000"/>
+		<dubbo:method name="reexchangeAccounting" async="true" return="false" retries="0" retry="0" timeout="30000"/>
+	</dubbo:service>
 </beans>
