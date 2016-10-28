@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.dubbo.rpc.Result;
 import com.zlebank.zplatform.acc.bean.TradeInfo;
 import com.zlebank.zplatform.acc.exception.AbstractBusiAcctException;
 import com.zlebank.zplatform.acc.exception.AccBussinessException;
@@ -181,10 +180,13 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 	 */
 	@Override
 	public ResultBean reexchangeAccounting(String txnseqno) {
+		log.info("交易:"+txnseqno+"开始实时代付退汇账务");
+		ResultBean resultBean = null;
+		PojoTxnsLog txnsLog = null;
 		try {
-			PojoTxnsLog txnsLog = txnsLogDAO.getTxnsLogByTxnseqno(txnseqno);
+			txnsLog = txnsLogDAO.getTxnsLogByTxnseqno(txnseqno);
 			TradeInfo tradeInfo = new TradeInfo();
-			tradeInfo.setTxnseqno(txnsLog.getTxnseqno());
+			tradeInfo.setTxnseqno(txnsLog.getTxnseqnoOg());
 			tradeInfo.setAmount(new BigDecimal(txnsLog.getAmount()));
 			tradeInfo.setBusiCode(BusinessEnum.INSTEADPAY_REALTIME.getBusiCode());
 			tradeInfo.setCharge(new BigDecimal(txnsLog.getTxnfee()));
@@ -196,6 +198,9 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 			tradeInfo.setCoopInstCode(txnsLog.getAcccoopinstino());
 			tradeInfo.setAccess_coopInstCode(txnsLog.getAccfirmerno());
 			accEntryService.accEntryProcess(tradeInfo, EntryEvent.REFUND_EXCHANGE);
+			resultBean = new ResultBean("00","交易成功");
+			resultBean.setResultBool(true);
+			log.info("交易:"+txnseqno+"实时代付退汇入账成功");
 		} catch (AccBussinessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,6 +214,15 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(resultBean.isResultBool()){
+			txnsLog.setApporderstatus(AccStatusEnum.Finish.getCode());
+			txnsLog.setApporderinfo("代付交易退汇入账成功");
+        }else{
+        	txnsLog.setApporderstatus(AccStatusEnum.AccountingFail.getCode());
+        	txnsLog.setApporderinfo(resultBean.getErrMsg());
+        }
+        txnsLogDAO.updateAppStatus(txnsLog.getTxnseqno(), txnsLog.getApporderstatus(), txnsLog.getApporderinfo());
+        txnsLogDAO.updateTradeStatFlag(txnsLog.getTxnseqno(), TradeStatFlagEnum.FINISH_ACCOUNTING);
 		return null;
 	}
 }
