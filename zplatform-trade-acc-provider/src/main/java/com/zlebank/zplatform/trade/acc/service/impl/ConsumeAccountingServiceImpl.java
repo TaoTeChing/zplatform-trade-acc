@@ -45,7 +45,7 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
  			//resultBean = productTradeAccounting(txnsLogBean);
  			log.info("交易:"+txnsLogBean.getTxnseqno()+"结束产品消费账务");
  		}else if(businessEnum==BusinessEnum.CONSUMEQUICK){//一般消费账务处理
- 			log.info("交易:"+txnsLogBean.getTxnseqno()+"开始一般消费账务");
+			log.info("交易:"+txnsLogBean.getTxnseqno()+"开始一般消费账务");
  			resultBean = commonTradeAccounting(txnsLogBean);
  			log.info("交易:"+txnsLogBean.getTxnseqno()+"结束一般消费账务");
  		}else if(businessEnum==BusinessEnum.CONSUME_INDUSTRY){

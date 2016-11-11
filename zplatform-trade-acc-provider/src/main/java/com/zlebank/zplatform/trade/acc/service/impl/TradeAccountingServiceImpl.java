@@ -34,7 +34,8 @@ public class TradeAccountingServiceImpl implements TradeAccountingService {
 		if(StringUtils.isEmpty(txnsLog.getApporderstatus())){
 			TxnsLogBean txnsLogBean = BeanCopyUtil.copyBean(TxnsLogBean.class, txnsLog);
 			if(busitype==BusiTypeEnum.consumption){
-				
+				resultBean = consumeAccountingService.consumeAccounting(txnsLogBean);
+			}else if(busitype==BusiTypeEnum.charge){
 				resultBean = consumeAccountingService.consumeAccounting(txnsLogBean);
 			}else if(busitype==BusiTypeEnum.insteadPay){
 				resultBean = insteadPayAccountingService.insteadPayAccounting(txnsLogBean);
