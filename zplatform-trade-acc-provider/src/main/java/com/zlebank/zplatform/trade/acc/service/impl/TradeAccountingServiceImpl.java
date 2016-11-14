@@ -44,5 +44,31 @@ public class TradeAccountingServiceImpl implements TradeAccountingService {
 		
 		return resultBean;
 	}
+	/**
+	 *
+	 * @param txnseqno
+	 * @return
+	 */
+	@Override
+	public ResultBean accountingForSync(String txnseqno) {
+		ResultBean resultBean = null;
+		PojoTxnsLog txnsLog = txnsLogDAO.getTxnsLogByTxnseqno(txnseqno);
+		if(txnsLog==null){
+			return null;
+		}
+		BusiTypeEnum busitype = BusiTypeEnum.fromValue(txnsLog.getBusitype());
+		if(StringUtils.isEmpty(txnsLog.getApporderstatus())){
+			TxnsLogBean txnsLogBean = BeanCopyUtil.copyBean(TxnsLogBean.class, txnsLog);
+			if(busitype==BusiTypeEnum.consumption){
+				resultBean = consumeAccountingService.consumeAccounting(txnsLogBean);
+			}else if(busitype==BusiTypeEnum.charge){
+				resultBean = consumeAccountingService.consumeAccounting(txnsLogBean);
+			}else if(busitype==BusiTypeEnum.insteadPay){
+				resultBean = insteadPayAccountingService.insteadPayAccounting(txnsLogBean);
+			}
+		}
+		
+		return resultBean;
+	}
 
 }
