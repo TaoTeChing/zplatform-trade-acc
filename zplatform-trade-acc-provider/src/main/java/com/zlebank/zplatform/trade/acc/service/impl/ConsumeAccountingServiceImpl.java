@@ -85,12 +85,12 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
                 busiCode = "10000002";
                 payMemberId = txnsLog.getPayfirmerno();
                 if (txnsLog.getTxnfee() != null) {
-                    txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
+                    //txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
                 }
             }else {
                 busiCode = "10000001";
                 if (txnsLog.getTxnfee() != null) {
-                	txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
+                	//txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
                 }
             }
             /**产品id**/
@@ -110,7 +110,7 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
             if("10000004".equals(txnsLog.getBusicode())){
                 isSplit = true;
             }
-            txnsLogDAO.updateAccBusiCodeAndFee(txnseqno, busiCode,txnfee+"");
+            //txnsLogDAO.updateAccBusiCodeAndFee(txnseqno, busiCode,txnfee+"");
             TradeInfo tradeInfo = new TradeInfo(txnseqno, payordno, busiCode, payMemberId, payToMemberId, payToParentMemberId, channelId, productId, amount, commission, charge, amountD, amountE, isSplit);
             tradeInfo.setCoopInstCode(txnsLog.getAccfirmerno());
             log.info(JSON.toJSONString(tradeInfo));

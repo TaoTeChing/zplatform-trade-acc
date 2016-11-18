@@ -12,6 +12,7 @@ import com.zlebank.zplatform.trade.acc.common.dao.pojo.PojoTxnsLog;
 import com.zlebank.zplatform.trade.acc.enums.BusiTypeEnum;
 import com.zlebank.zplatform.trade.acc.service.ConsumeAccountingService;
 import com.zlebank.zplatform.trade.acc.service.InsteadPayAccountingService;
+import com.zlebank.zplatform.trade.acc.service.RechargeAccountingService;
 import com.zlebank.zplatform.trade.acc.service.TradeAccountingService;
 
 @Service("tradeAccountingService")
@@ -23,6 +24,8 @@ public class TradeAccountingServiceImpl implements TradeAccountingService {
 	private ConsumeAccountingService consumeAccountingService;
 	@Autowired
 	private InsteadPayAccountingService insteadPayAccountingService;
+	@Autowired
+	private RechargeAccountingService rechargeAccountingService;
 	@Override
 	public synchronized ResultBean accountingFor(String txnseqno) {
 		ResultBean resultBean = null;
@@ -36,7 +39,7 @@ public class TradeAccountingServiceImpl implements TradeAccountingService {
 			if(busitype==BusiTypeEnum.consumption){
 				resultBean = consumeAccountingService.consumeAccounting(txnsLogBean);
 			}else if(busitype==BusiTypeEnum.charge){
-				resultBean = consumeAccountingService.consumeAccounting(txnsLogBean);
+				resultBean = rechargeAccountingService.rechargeAccounting(txnsLogBean);
 			}else if(busitype==BusiTypeEnum.insteadPay){
 				resultBean = insteadPayAccountingService.insteadPayAccounting(txnsLogBean);
 			}

@@ -47,5 +47,6 @@ public interface TxnsLogDAO extends BaseDAO<PojoTxnsLog>{
 	 * @param txnsLog
 	 * @return
 	 */
+	@Deprecated
 	public Long getTxnFee(PojoTxnsLog txnsLog);
 }
