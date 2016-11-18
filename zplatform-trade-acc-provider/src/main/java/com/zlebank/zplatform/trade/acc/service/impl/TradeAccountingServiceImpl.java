@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zlebank.zplatform.commons.utils.BeanCopyUtil;
+import com.zlebank.zplatform.member.commons.utils.BeanCopyUtil;
 import com.zlebank.zplatform.trade.acc.bean.ResultBean;
 import com.zlebank.zplatform.trade.acc.bean.TxnsLogBean;
 import com.zlebank.zplatform.trade.acc.common.dao.TxnsLogDAO;

@@ -18,16 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zlebank.zplatform.acc.bean.TradeInfo;
+import com.zlebank.zplatform.acc.bean.enums.EntryEvent;
 import com.zlebank.zplatform.acc.exception.AbstractBusiAcctException;
 import com.zlebank.zplatform.acc.exception.AccBussinessException;
 import com.zlebank.zplatform.acc.exception.IllegalEntryRequestException;
 import com.zlebank.zplatform.acc.service.AccEntryService;
-import com.zlebank.zplatform.acc.service.entry.EntryEvent;
-import com.zlebank.zplatform.commons.dao.pojo.AccStatusEnum;
 import com.zlebank.zplatform.trade.acc.bean.ResultBean;
 import com.zlebank.zplatform.trade.acc.bean.TxnsLogBean;
 import com.zlebank.zplatform.trade.acc.common.dao.TxnsLogDAO;
 import com.zlebank.zplatform.trade.acc.common.dao.pojo.PojoTxnsLog;
+import com.zlebank.zplatform.trade.acc.common.enums.AccStatusEnum;
 import com.zlebank.zplatform.trade.acc.common.enums.ChannelEnmu;
 import com.zlebank.zplatform.trade.acc.common.enums.TradeStatFlagEnum;
 import com.zlebank.zplatform.trade.acc.enums.BusinessEnum;
