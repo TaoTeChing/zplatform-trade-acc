@@ -64,6 +64,7 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
     public ResultBean commonTradeAccounting(TxnsLogBean txnsLog){
     	ResultBean resultBean = null;
     	String txnseqno = txnsLog.getTxnseqno();
+    	String accBusiCode=null;
     	try {
             /**支付订单号**/
             String payordno = txnsLog.getPayordno();
@@ -83,12 +84,14 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
             long txnfee = 0;
             if("99999999".equals(channelId)){
                 busiCode = "10000002";
+                accBusiCode = "10000002";
                 payMemberId = txnsLog.getPayfirmerno();
                 if (txnsLog.getTxnfee() != null) {
                     //txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
                 }
             }else {
                 busiCode = "10000001";
+                accBusiCode = "10000001";
                 if (txnsLog.getTxnfee() != null) {
                 	//txnfee = txnsLogDAO.getTxnFee(BeanCopyUtil.copyBean(PojoTxnsLog.class, txnsLog));
                 }
@@ -137,6 +140,7 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
         } catch (Exception e) {
 			// TODO: handle exception
         	e.printStackTrace();
+        	resultBean = new ResultBean("T000", e.getMessage());
 		}
         if(resultBean.isResultBool()){
             txnsLog.setApporderstatus(AccStatusEnum.Finish.getCode());
@@ -145,7 +149,7 @@ public class ConsumeAccountingServiceImpl implements ConsumeAccountingService {
             txnsLog.setApporderstatus(AccStatusEnum.AccountingFail.getCode());
             txnsLog.setApporderinfo(resultBean.getErrMsg());
         }
-        txnsLogDAO.updateAppStatus(txnseqno, txnsLog.getApporderstatus(), txnsLog.getApporderinfo());
+        txnsLogDAO.updateAppStatus(txnseqno, txnsLog.getApporderstatus(), txnsLog.getApporderinfo(),accBusiCode);
         txnsLogDAO.updateTradeStatFlag(txnseqno, TradeStatFlagEnum.FINISH_ACCOUNTING);
         return resultBean;
     }

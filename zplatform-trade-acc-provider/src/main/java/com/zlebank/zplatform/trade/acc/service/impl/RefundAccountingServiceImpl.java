@@ -59,8 +59,7 @@ public class RefundAccountingServiceImpl implements RefundAccountingService {
 		tradeInfo.setPayMemberId(txnsLog.getAccmemberid());
 		tradeInfo.setPayToMemberId(txnsLog.getAccsecmerno());
 		tradeInfo.setAmount(new BigDecimal(txnsLog.getAmount()));
-		tradeInfo.setCharge(new BigDecimal(txnsLogDAO
-				.getTxnFee(txnsLog)));
+		tradeInfo.setCharge(new BigDecimal(txnsLog.getTxnfee()));
 		tradeInfo.setTxnseqno(txnsLog.getTxnseqno());
 		tradeInfo.setCoopInstCode(txnsLog.getAccfirmerno());
 		tradeInfo.setBusiCode(txnsLog.getBusicode());

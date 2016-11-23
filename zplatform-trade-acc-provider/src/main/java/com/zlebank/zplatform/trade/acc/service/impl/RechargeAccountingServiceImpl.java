@@ -155,7 +155,7 @@ public class RechargeAccountingServiceImpl implements RechargeAccountingService 
 			txnsLog.setApporderinfo(resultBean.getErrMsg());
 		}
 		txnsLogDAO.updateAppStatus(txnsLog.getTxnseqno(), txnsLog.getApporderstatus(),
-				txnsLog.getApporderinfo());
+				txnsLog.getApporderinfo(),BusinessEnum.RECHARGE.getBusiCode());
 		txnsLogDAO.updateTradeStatFlag(txnsLog.getTxnseqno(),
 				TradeStatFlagEnum.FINISH_ACCOUNTING);
 		return resultBean;

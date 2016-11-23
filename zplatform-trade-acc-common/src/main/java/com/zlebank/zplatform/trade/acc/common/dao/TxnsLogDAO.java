@@ -49,4 +49,13 @@ public interface TxnsLogDAO extends BaseDAO<PojoTxnsLog>{
 	 */
 	@Deprecated
 	public Long getTxnFee(PojoTxnsLog txnsLog);
+	
+	/**
+	 * 更新交易账务结果和业务代码
+	 * @param txnseqno
+	 * @param appOrderStatus
+	 * @param appOrderinfo
+	 * @param accBusiCode
+	 */
+	public void updateAppStatus(String txnseqno, String appOrderStatus,String appOrderinfo,String accBusiCode);
 }

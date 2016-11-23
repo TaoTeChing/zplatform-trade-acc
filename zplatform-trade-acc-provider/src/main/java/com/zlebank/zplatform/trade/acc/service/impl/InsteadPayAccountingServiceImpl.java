@@ -63,7 +63,7 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 			tradeInfo.setTxnseqno(txnsLog.getTxnseqno());
 			tradeInfo.setAmount(new BigDecimal(txnsLog.getAmount()));
 			tradeInfo.setBusiCode(BusinessEnum.INSTEADPAY_REALTIME.getBusiCode());
-			tradeInfo.setCharge(new BigDecimal(txnsLogDAO.getTxnFee(txnsLog)));
+			tradeInfo.setCharge(new BigDecimal(txnsLog.getTxnfee()));
 			tradeInfo.setCommission(BigDecimal.ZERO);
 			tradeInfo.setPayMemberId(txnsLog.getAccsecmerno());
 			tradeInfo.setPayToMemberId(txnsLog.getAccmemberid());
@@ -115,6 +115,7 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
 	public ResultBean realTimeInsteadPayAccounting(TxnsLogBean txnsLogBean){
 		ResultBean resultBean = null; 
 		EntryEvent entryEvent = null;
+		
 		try {
 			TradeInfo tradeInfo = new TradeInfo();
 			tradeInfo.setTxnseqno(txnsLogBean.getTxnseqno());
@@ -169,7 +170,7 @@ public class InsteadPayAccountingServiceImpl implements InsteadPayAccountingServ
         	txnsLogBean.setApporderstatus(AccStatusEnum.AccountingFail.getCode());
         	txnsLogBean.setApporderinfo(resultBean.getErrMsg());
         }
-        txnsLogDAO.updateAppStatus(txnsLogBean.getTxnseqno(), txnsLogBean.getApporderstatus(), txnsLogBean.getApporderinfo());
+        txnsLogDAO.updateAppStatus(txnsLogBean.getTxnseqno(), txnsLogBean.getApporderstatus(), txnsLogBean.getApporderinfo(),BusinessEnum.INSTEADPAY_REALTIME.getBusiCode());
         txnsLogDAO.updateTradeStatFlag(txnsLogBean.getTxnseqno(), TradeStatFlagEnum.FINISH_ACCOUNTING);
 		return resultBean;
 	}

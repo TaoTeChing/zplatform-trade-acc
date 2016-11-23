@@ -112,7 +112,18 @@ public class TxnsLogDAOImpl extends HibernateBaseDAOImpl<PojoTxnsLog> implements
        
     }
 	
-	public static void main(String[] args) {
-		System.out.println(StringUtils.isEmpty(null));
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
+	public void updateAppStatus(String txnseqno, String appOrderStatus,String appOrderinfo,String accBusiCode) {
+		String hql = "update PojoTxnsLog set appordfintime = ?,apporderstatus = ?,apporderinfo = ?,accbusicode = ? where txnseqno = ?";
+		Query query = getSession().createQuery(hql);
+		query.setParameter(0, DateUtil.getCurrentDateTime());
+		query.setParameter(1, appOrderStatus);
+		query.setParameter(2, appOrderinfo);
+		query.setParameter(3, accBusiCode);
+		query.setParameter(4, txnseqno);
+		int rows = query.executeUpdate();
+		log.info("updateAppStatus() effect rows:" + rows);
+
 	}
 }

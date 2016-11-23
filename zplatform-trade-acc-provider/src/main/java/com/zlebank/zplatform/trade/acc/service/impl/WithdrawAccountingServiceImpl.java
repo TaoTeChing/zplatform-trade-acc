@@ -55,7 +55,7 @@ public class WithdrawAccountingServiceImpl implements WithdrawAccountingService 
 			tradeInfo.setPayMemberId(txnsLog.getAccmemberid());
 			tradeInfo.setPayToMemberId(txnsLog.getAccmemberid());
 			tradeInfo.setAmount(new BigDecimal(txnsLog.getAmount()));
-			tradeInfo.setCharge(new BigDecimal(txnsLogDAO.getTxnFee(txnsLog)));
+			tradeInfo.setCharge(new BigDecimal(txnsLog.getTxnfee()));
 			tradeInfo.setTxnseqno(txnsLog.getTxnseqno());
 			tradeInfo.setBusiCode(BusinessCodeEnum.WITHDRAWALS.getBusiCode());
 			tradeInfo.setAccess_coopInstCode(txnsLog.getAccfirmerno());
